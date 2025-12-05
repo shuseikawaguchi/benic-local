@@ -33,3 +33,4 @@ def ask_kiki(req: UserRequest):
         
     except Exception as e:
         return {"error": str(e)}
+    
