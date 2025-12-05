@@ -21,14 +21,15 @@ def root():
 
 @app.post("/ask")
 def ask_kiki(req: UserRequest):
-    """
-    Copilot Studio から叩かれるエンドポイント
-    """
     try:
         # 親エージェントを起動
         result = run_kiki_orchestrator(req.query)
-
-        return {"response": result.raw}
-
+        
+        # ★修正: 正規表現(re)は削除！ シンプルに Pydantic の中身を取り出すだけ。
+        # output_pydantic を使った場合、result.pydantic にデータが入っています。
+        final_response = result.pydantic.tool_response
+        
+        return {"response": final_response}
+        
     except Exception as e:
         return {"error": str(e)}
