@@ -13,6 +13,10 @@ app = FastAPI(
 class UserRequest(BaseModel):
     query: str
 
+#class UserRequest(BaseModel):
+#    text: str                 # ユーザーの自然文
+#    context: dict | None = None  # Copilot Studio等から渡る補助情報
+
 
 @app.get("/")
 def root():
