@@ -14,9 +14,14 @@ class RequirementBotConnector(BaseTool):
     args_schema: type[BaseModel] = QueryInput
 
     # 【現在のダミー実装】
+    #def _run(self, query: str) -> str:
+    #    print(f"[Connector] 要件定義ボットに接続中... 入力: {query}")
+    #    return f"【要件定義エージェントからの回答】:「{query}」についての要件定義ドラフトを作成しました。（接続テスト成功）"
+    
+# --- /api/openai-test に接続する ---
     def _run(self, query: str) -> str:
         print(f"[Connector] 要件定義ボットに接続中... 入力: {query}")
-        return f"【要件定義エージェントからの回答】:「{query}」についての要件定義ドラフトを作成しました。（接続テスト成功）"
+        return run_openai_test(query)
 
 
 # --- 脱線検知エージェント (将来の想定) ---
