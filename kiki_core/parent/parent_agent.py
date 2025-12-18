@@ -1,4 +1,12 @@
 import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+# .env ロード
+env_path = Path(__file__).resolve().parent.parent / '.env'
+load_dotenv(dotenv_path=env_path)
+
 
 # 環境変数の強制上書き(CrewAIAzureの設定無視対策)
 os.environ["OPENAI_API_KEY"] = "NA" # ダミー

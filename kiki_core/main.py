@@ -1,13 +1,33 @@
 import re
 import sys
 
-import pysqlite3
+# 一時的にコメントアウト
+#import pysqlite3
+#sys.modules["sqlite3"] = pysqlite3
 
-sys.modules["sqlite3"] = pysqlite3
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from parent.parent_agent import run_kiki_orchestrator
+
+# --- APIキー用の設定 ---
+import os
+from fastapi import Header, HTTPException, Depends
+
+def verify_api_key(x_api_key: str = Header(None)):
+    expected_key = os.getenv("API_KEY")
+
+    if not expected_key:
+        # 環境変数が未設定（サーバー設定ミス）
+        raise HTTPException(status_code=500, detail="API_KEY is not configured")
+
+    if x_api_key != expected_key:
+        # APIキーが不一致（ユーザー側のミス）
+        raise HTTPException(status_code=401, detail="Invalid API Key")
+# ---   ---
+
+
+from kiki_core.parent.parent_agent import run_kiki_orchestrator
+
 
 app = FastAPI(
     title="kiki API",
@@ -27,7 +47,10 @@ def root():
 
 
 @app.post("/ask")
-def ask_kiki(req: UserRequest):
+def ask_kiki(
+    req: UserRequest,
+    _: None = Depends(verify_api_key),
+):
     """
     Copilot Studio から叩かれるエンドポイント
     """
