@@ -1,6 +1,7 @@
 from crewai.tools import BaseTool
 from pydantic import BaseModel, Field
 
+from kiki_core.children.openai_test_agent import run_openai_test
 
 # AIに対して入力の型を指定する
 class QueryInput(BaseModel):

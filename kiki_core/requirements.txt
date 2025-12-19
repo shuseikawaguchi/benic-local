@@ -1,6 +1,10 @@
 fastapi
 uvicorn
+h11
 crewai
 crewai-tools
 langchain-openai
 python-dotenv
+crewai[azure]
+pysqlite3-binary
+azure-ai-inference

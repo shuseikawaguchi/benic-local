@@ -23,9 +23,9 @@ from .children_connectors import (
     RequirementBotConnector
 )
 
-# 出力用の箱（これはそのまま）
-class AgentOutput(BaseModel):
-    tool_response: str = Field(description="ツールから返ってきたテキスト全文。")
+
+class ExactOutput(BaseModel):
+    result_text: str = Field(description="ツールから返ってきたテキストそのもの。一文字も変更・追加してはいけない。")
 
 
 def run_kiki_orchestrator(user_input: str):
@@ -56,24 +56,25 @@ def run_kiki_orchestrator(user_input: str):
         llm=kiki_llm,
         function_calling_llm=kiki_llm
     )
-# ★タスク定義を修正（タグの話を消し、コピーを徹底させる）
+
     task = Task(
         description=f"""
         ユーザー入力: 「{user_input}」
-        
-        1. 最適なツールを実行する。
-        2. ツールから返ってきたテキスト（文字列）を取得する。
-        3. そのテキストを、**一文字も変更・削除せず**、そのまま `tool_response` に格納する。
-        
-        【重要】
-        - ツールが返す「【〇〇からの回答】」という部分も、大切なデータの一部です。絶対に削除してはいけません。
-        - 挨拶や補足は一切禁止です。
+
+        【最重要指令】
+        あなたは「回答生成」を行ってはなりません。あなたの仕事は「ツールの実行結果を運ぶこと」だけです。
+        もしツールが「A」と返したら、あなたの答えも「A」でなければなりません。
+        **追加で「〇〇をご提案します...」「を以下にまとめます」となった時点で失敗**です。
+
+        手順:
+        1. 適切なツールを実行する。
+        2. ツールから返ってきたテキスト（Tool Output）をそのまま取得する。
+        3. そのテキストが「作成しました」という短い報告であっても、絶対に肉付けしてはいけない。
+        4. ツールが出力した文字列のみを返すこと。
         """,
-        expected_output="ツールからの出力テキスト（完全なコピー）",
-        output_pydantic=AgentOutput, # ★この「型」強制が最強の縛りです
+        expected_output="ツールから返却された文字列そのもの（1文字も変更禁止）",
         agent=manager
     )
-
 
     crew = Crew(
         agents=[manager],
